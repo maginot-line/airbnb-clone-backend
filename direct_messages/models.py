@@ -3,7 +3,7 @@ from common.models import CommonModel
 
 # Create your models here.
 class ChattingRoom(CommonModel):
-    users = models.ManyToManyField("users.User")
+    users = models.ManyToManyField("users.User", related_name="chatting_rooms")
 
     def __str__(self):
         return "Chatting Room"
@@ -12,9 +12,17 @@ class ChattingRoom(CommonModel):
 class Message(CommonModel):
     text = models.TextField()
     user = models.ForeignKey(
-        "users.User", null=True, blank=True, on_delete=models.SET_NULL
+        "users.User",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="messages",
     )
-    room = models.ForeignKey("direct_messages.ChattingRoom", on_delete=models.CASCADE)
+    room = models.ForeignKey(
+        "direct_messages.ChattingRoom",
+        on_delete=models.CASCADE,
+        related_name="messages",
+    )
 
     def __str__(self):
         return f"{self.user} says: {self.text}"
