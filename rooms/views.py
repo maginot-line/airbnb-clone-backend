@@ -101,7 +101,7 @@ class RoomDetail(APIView):
                     raise ParseError("Amenity not found")
             return Response(RoomDetailSerializer(updated_room).data)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         room = self.get_object(pk)
