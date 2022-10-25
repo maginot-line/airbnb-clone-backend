@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 from bookings.models import Booking
-from bookings.serializers import PublicBookingSerializer
+from bookings.serializers import PublicBookingSerializer, CreateRoomBookingSerializer
 from categories.models import Category
 from medias.serializers import PhotoSerializer
 from reviews.serializers import ReviewSerializer
@@ -224,3 +224,11 @@ class RoomBookings(APIView):
         )
         serializer = PublicBookingSerializer(bookings, many=True)
         return Response(serializer.data)
+
+    def post(self, request, pk):
+        room = self.get_object(pk)
+        serializer = CreateRoomBookingSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response({"ok": True})
+        else:
+            return Response(serializer.errors)
