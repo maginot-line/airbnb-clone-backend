@@ -1,4 +1,5 @@
 import jwt
+import requests
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.exceptions import ParseError, NotFound
@@ -111,5 +112,17 @@ class JWTLogIn(APIView):
 class GithubLogin(APIView):
     def post(self, request):
         code = request.data.get("code")
-        print(code)
-        return Response()
+        access_token = requests.post(
+            f"https://github.com/login/oauth/access_token?code={code}&client_id=edd37c5f10e12db8f49e&client_secret={settings.GH_SECRET}",
+            headers={"Accept": "application/json"},
+        )
+        access_token = access_token.json().get("access_token")
+        user_data = requests.get(
+            "https://api.github.com/user",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json",
+            },
+        )
+        user_data = user_data.json()
+        print(user_data)
