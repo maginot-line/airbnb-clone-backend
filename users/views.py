@@ -195,3 +195,33 @@ class KakaoLogin(APIView):
                 return Response(status=HTTP_200_OK)
         except Exception:
             return Response(status=HTTP_400_BAD_REQUEST)
+
+
+class SignIn(APIView):
+    def post(self, request):
+        name = request.data.get("name")
+        email = request.data.get("email")
+        username = request.data.get("username")
+        password = request.data.get("password")
+        if not name or not email or not username or not password:
+            raise ParseError
+        try:
+            User.objects.get(email=email)
+            return Response(
+                {"error": "email already exists"}, status=HTTP_400_BAD_REQUEST
+            )
+        except User.DoesNotExist:
+            try:
+                User.objects.get(username=username)
+                return Response(
+                    {"error": "username already exists"}, status=HTTP_400_BAD_REQUEST
+                )
+            except User.DoesNotExist:
+                user = User.objects.create_user(
+                    name=name,
+                    email=email,
+                    username=username,
+                    password=password,
+                )
+                login(request, user)
+                return Response(status=HTTP_200_OK)

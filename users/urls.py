@@ -9,5 +9,6 @@ urlpatterns = [
     path("log-out", views.LogOut.as_view()),
     path("github", views.GithubLogin.as_view()),
     path("kakao", views.KakaoLogin.as_view()),
+    path("sign-in", views.SignIn.as_view()),
     path("@<str:username>", views.PublicUser.as_view()),
 ]
